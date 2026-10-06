@@ -34,38 +34,52 @@ public class StateSpaceSearch {
 
         SearchState initialState = SearchState.initial(diff);
 
-        PriorityQueue<SearchState> frontier = new PriorityQueue<>(Comparator.comparingInt(SearchState::cost));
+        PriorityQueue<SearchState> frontier =
+                new PriorityQueue<>(
+                        Comparator.comparingInt(SearchState::cost)
+                );
+
+        Map<StateKey, Integer> bestKnownCost =
+                new HashMap<>();
+
+        StateKey initialKey = StateKey.from(initialState);
+
+        bestKnownCost.put(initialKey, initialState.cost());
 
         frontier.add(initialState);
 
         while (!frontier.isEmpty()) {
             SearchState currentState = frontier.poll();
 
-//            System.out.println(
-//                    "Visiting state with cost "
-//                            + currentState.cost()
-//            );
-//
-//            System.out.println(
-//                    "Remaining removed: "
-//                            + currentState.unexplainedRemoved().size()
-//            );
-//
-//            System.out.println(
-//                    "Remaining added: "
-//                            + currentState.unexplainedAdded().size()
-//            );
+            StateKey currentKey = StateKey.from(currentState);
+
+            int knownCost = bestKnownCost.getOrDefault(currentKey, Integer.MAX_VALUE);
+
+            // if cheaper version of this state was already  found
+            if (currentState.cost() > knownCost) {
+                continue;
+            }
 
             if (currentState.isGoal()) {
                 return currentState;
             }
 
-            List<ChangeCandidate> applicableCandidates = findApplicableCandidates(currentState, candidates);
+            List<ChangeCandidate> applicableCandidates = findApplicableCandidates(currentState, candidates );
 
             List<SearchState> childStates = createChildStates(currentState, applicableCandidates);
 
-            frontier.addAll(childStates);
+            for (SearchState childState : childStates) {
+                StateKey childKey = StateKey.from(childState);
+
+                int previousCost = bestKnownCost.getOrDefault(childKey, Integer.MAX_VALUE);
+
+                if (childState.cost() < previousCost) {
+                    bestKnownCost.put(childKey, childState.cost());
+                    frontier.add(childState);
+                }
+            }
         }
+
         throw new IllegalStateException(
                 "No combination of candidates explains all differences"
         );
