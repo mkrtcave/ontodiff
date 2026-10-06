@@ -1,6 +1,7 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
+import cz.cvut.fel.ontodiff.EdgeFact;
 import cz.cvut.fel.ontodiff.properties.SynonymPropety;
 import cz.cvut.fel.ontodiff.properties.TextDefinitionProperties;
 import org.semanticweb.owlapi.model.*;
@@ -8,6 +9,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 public class HighLevelDiffServiceImpl implements HighLevelDiffService{
 
@@ -280,7 +282,27 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         return result;
     }
 
+    private Optional<EdgeFact> extractSimpleEdge(OWLAxiom axiom) {
+        if (axiom instanceof OWLSubClassOfAxiom subClassAxiom
+                && !subClassAxiom.getSubClass().isAnonymous()
+                && !subClassAxiom.getSuperClass().isAnonymous()) {
 
+            return Optional.of(new EdgeFact(
+                    subClassAxiom.getSubClass()
+                            .asOWLClass()
+                            .getIRI()
+                            .toString(),
+                    SUBCLASS_PROP,
+                    subClassAxiom.getSuperClass()
+                            .asOWLClass()
+                            .getIRI()
+                            .toString(),
+                    axiom
+            ));
+        }
+
+        return Optional.empty();
+    }
 
     private Set<EdgeCreation> computeEdgeCreations(DiffResult diff) {
         return diff.getOnlyInUpdate().stream()

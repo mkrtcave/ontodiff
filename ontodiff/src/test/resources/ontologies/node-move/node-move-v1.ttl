@@ -1,0 +1,24 @@
+@prefix ex:   <http://example.org/disease-ontology#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/disease-ontology> a owl:Ontology .
+
+# The same classes are declared in both versions. Only their parents change.
+
+ex:Disease a owl:Class .
+
+ex:InfectiousDisease a owl:Class ;
+    rdfs:subClassOf ex:Disease .
+
+ex:RespiratoryDisease a owl:Class ;
+    rdfs:subClassOf ex:Disease .
+
+ex:Influenza a owl:Class ;
+    rdfs:subClassOf ex:InfectiousDisease .
+
+ex:CommonCold a owl:Class ;
+    rdfs:subClassOf ex:InfectiousDisease .
+
+ex:Pneumonia a owl:Class ;
+    rdfs:subClassOf ex:RespiratoryDisease .

@@ -1,19 +1,20 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
+import cz.cvut.fel.ontodiff.ProposedChange;
 
 import java.util.Set;
 
 public interface HighLevelDiffService {
 
-    record NodeCreation(String iri){}
+    record NodeCreation(String iri) implements ProposedChange {}
     record NodeDeletion(String iri) {}
     record NodeObsoletion(String iri, String reason) {}
     record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) {}
     record EdgeCreation(String srcIri, String propIri, String tgtIri) {}
     record EdgeDeletion(String srcIri, String propIri, String tgtIri) {}
     record ClassCreation(String iri) {}
-    record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) {}
+    record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) {}
     record PredicateChange(String srcIri, String oldPrpIri, String newPrpIri) {}
     record NodeRename(String classIri, String oldLabel, String newLabel) {}
