@@ -1,6 +1,7 @@
 package cz.cvut.fel.ontodiff;
 
 import cz.cvut.fel.ontodiff.generators.CandidateGenerator;
+import cz.cvut.fel.ontodiff.generators.NodeCreationCandidateGenerator;
 import cz.cvut.fel.ontodiff.generators.NodeMoveCandidateGenerator;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffServiceImpl;
 import cz.cvut.fel.ontodiff.service.OWLDiffOntologyDiffService;
@@ -37,8 +38,9 @@ public class Diff {
             DiffResult diffResult = service.diff(originalO, updateO, Engine.SYNTACTIC);
 
             List<CandidateGenerator> generators = List.of(
-                    new NodeMoveCandidateGenerator()
-//                    new PredicateChangeCandidateGenerator(),
+                    new NodeMoveCandidateGenerator(),
+                    new NodeCreationCandidateGenerator()
+        //                    new PredicateChangeCandidateGenerator(),
 //                    new NodeRenameCandidateGenerator()
             );
 

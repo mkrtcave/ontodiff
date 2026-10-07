@@ -23,3 +23,5 @@ ex:CommonCold a owl:Class ;
 
 ex:Pneumonia a owl:Class ;
     rdfs:subClassOf ex:InfectiousDisease .
+
+ex:Bronchitis a owl:Class .

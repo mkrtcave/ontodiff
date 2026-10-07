@@ -16,8 +16,7 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
 
     private static final String SUBCLASS_OF = "http://www.w3.org/2000/01/rdf-schema#subClassOf";
 
-    private final SimpleEdgeExtractor edgeExtractor =
-            new SimpleEdgeExtractor();
+    private final SimpleEdgeExtractor edgeExtractor = new SimpleEdgeExtractor();
 
     public Stream<ChangeCandidate> generate(DiffResult diff){
         List<EdgeFact> removedEdges = diff.getOnlyInOriginal()

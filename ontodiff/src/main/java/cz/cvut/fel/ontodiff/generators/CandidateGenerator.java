@@ -15,25 +15,4 @@ public interface CandidateGenerator {
 
     Stream<ChangeCandidate> generate(DiffResult diff);
 
-//    default Optional<EdgeFact> extractSimpleEdge(OWLAxiom axiom) {
-//        if (axiom instanceof OWLSubClassOfAxiom subClassAxiom
-//                && !subClassAxiom.getSubClass().isAnonymous()
-//                && !subClassAxiom.getSuperClass().isAnonymous()) {
-//
-//            return Optional.of(new EdgeFact(
-//                    subClassAxiom.getSubClass()
-//                            .asOWLClass()
-//                            .getIRI()
-//                            .toString(),
-//                    SUBCLASS_OF.toString(),
-//                    subClassAxiom.getSuperClass()
-//                            .asOWLClass()
-//                            .getIRI()
-//                            .toString(),
-//                    axiom
-//            ));
-//        }
-//
-//        return Optional.empty();
-//    }
 }

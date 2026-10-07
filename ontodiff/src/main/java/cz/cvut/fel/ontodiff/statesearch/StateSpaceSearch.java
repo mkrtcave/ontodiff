@@ -30,9 +30,16 @@ public class StateSpaceSearch {
 
     public SearchState search (DiffResult diff, List<ChangeCandidate> candidates) {
 
-        ensureAllDifferencesHaveCandidate(diff, candidates);
+        ensureAllDifferencesHaveCandidate(
+                diff,
+                candidates
+        );
 
-        SearchState initialState = SearchState.initial(diff);
+        CandidateIndex candidateIndex =
+                new CandidateIndex(candidates);
+
+        SearchState initialState =
+                SearchState.initial(diff);
 
         PriorityQueue<SearchState> frontier =
                 new PriorityQueue<>(
@@ -64,7 +71,7 @@ public class StateSpaceSearch {
                 return currentState;
             }
 
-            List<ChangeCandidate> applicableCandidates = findApplicableCandidates(currentState, candidates );
+            List<ChangeCandidate> applicableCandidates = candidateIndex.findApplicable(currentState);
 
             List<SearchState> childStates = createChildStates(currentState, applicableCandidates);
 
