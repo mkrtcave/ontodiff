@@ -1,28 +1,28 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
-import cz.cvut.fel.ontodiff.ProposedChange;
+import cz.cvut.fel.ontodiff.changes.ProposedChange;
 
 import java.util.Set;
 
 public interface HighLevelDiffService {
 
     record NodeCreation(String iri) implements ProposedChange {}
-    record NodeDeletion(String iri) {}
-    record NodeObsoletion(String iri, String reason) {}
-    record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) {}
-    record EdgeCreation(String srcIri, String propIri, String tgtIri) {}
-    record EdgeDeletion(String srcIri, String propIri, String tgtIri) {}
-    record ClassCreation(String iri) {}
+    record NodeDeletion(String iri) implements ProposedChange {}
+    record NodeObsoletion(String iri, String reason) implements ProposedChange {}
+    record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
+    record EdgeCreation(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
+    record EdgeDeletion(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
+    record ClassCreation(String iri) implements ProposedChange {}
     record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) implements ProposedChange {}
-    record SrcTgt(String srcIri, String tgtIri) {}
-    record PredicateChange(String srcIri, String oldPrpIri, String newPrpIri) {}
-    record NodeRename(String classIri, String oldLabel, String newLabel) {}
-    record NewTextDefinition(String classIri, String definition) {}
-    record RemoveTextDefinition(String classIri, String definition) {}
-    record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) {}
-    record NewSynonym(String entityIri, String propertyIri, String synonym) {}
-    record RemoveSynonym(String entityIri, String propertyIri, String synonym) {}
+    record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
+    record PredicateChange(String srcIri, String oldPrpIri, String newPrpIri) implements ProposedChange {}
+    record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
+    record NewTextDefinition(String classIri, String definition) implements ProposedChange {}
+    record RemoveTextDefinition(String classIri, String definition) implements ProposedChange {}
+    record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) implements ProposedChange {}
+    record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
+    record RemoveSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
 
     record HighLevelDiff(
             Set<NodeCreation> nodeCreations,

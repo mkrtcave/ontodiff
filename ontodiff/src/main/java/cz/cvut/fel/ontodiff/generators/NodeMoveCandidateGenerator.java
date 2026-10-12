@@ -1,9 +1,9 @@
 package cz.cvut.fel.ontodiff.generators;
 
-import cz.cvut.fel.ontodiff.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.DiffResult;
-import cz.cvut.fel.ontodiff.EdgeFact;
-import cz.cvut.fel.ontodiff.SimpleEdgeExtractor;
+import cz.cvut.fel.ontodiff.utils.EdgeFact;
+import cz.cvut.fel.ontodiff.utils.SimpleEdgeExtractor;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 
 import java.util.ArrayList;

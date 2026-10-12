@@ -1,6 +1,6 @@
 package cz.cvut.fel.ontodiff.generators;
 
-import cz.cvut.fel.ontodiff.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.DiffResult;
 import cz.cvut.fel.ontodiff.Engine;
 import cz.cvut.fel.ontodiff.statesearch.SearchState;

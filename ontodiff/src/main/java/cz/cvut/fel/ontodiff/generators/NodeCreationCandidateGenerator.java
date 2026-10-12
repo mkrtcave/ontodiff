@@ -1,6 +1,6 @@
 package cz.cvut.fel.ontodiff.generators;
 
-import cz.cvut.fel.ontodiff.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.DiffResult;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 import org.semanticweb.owlapi.model.IRI;
@@ -11,8 +11,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class NodeCreationCandidateGenerator
-        implements CandidateGenerator {
+public class NodeCreationCandidateGenerator implements CandidateGenerator {
 
     @Override
     public Stream<ChangeCandidate> generate(

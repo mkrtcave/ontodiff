@@ -1,15 +1,9 @@
 package cz.cvut.fel.ontodiff.generators;
 
-import cz.cvut.fel.ontodiff.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.DiffResult;
-import cz.cvut.fel.ontodiff.EdgeFact;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
-import java.util.Optional;
 import java.util.stream.Stream;
-
-import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 public interface CandidateGenerator {
 

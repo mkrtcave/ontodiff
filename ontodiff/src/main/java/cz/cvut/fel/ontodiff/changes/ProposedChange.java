@@ -1,4 +1,4 @@
-package cz.cvut.fel.ontodiff;
+package cz.cvut.fel.ontodiff.changes;
 
 public interface ProposedChange {
     

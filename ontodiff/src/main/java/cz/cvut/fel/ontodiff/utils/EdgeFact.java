@@ -1,18 +1,20 @@
-package cz.cvut.fel.ontodiff;
+package cz.cvut.fel.ontodiff.utils;
 
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.util.Optional;
 
-public class SimpleEdgeExtractor {
+public record EdgeFact (
+        String subject,
+        String predicate,
+        String object,
+        OWLAxiom sourceAxiom
+) {
+    private static final String SUBCLASS_OF =
+            "http://www.w3.org/2000/01/rdf-schema#subClassOf";
 
-    private static final String SUBCLASS_OF = OWLRDFVocabulary.RDFS_SUBCLASS_OF
-            .getIRI()
-            .toString();
-
-    public Optional<EdgeFact> extract(OWLAxiom axiom) {
+    private Optional<EdgeFact> extractSimpleEdge(OWLAxiom axiom) {
         if (axiom instanceof OWLSubClassOfAxiom subClassAxiom
                 && !subClassAxiom.getSubClass().isAnonymous()
                 && !subClassAxiom.getSuperClass().isAnonymous()) {

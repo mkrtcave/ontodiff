@@ -22,3 +22,5 @@ ex:CommonCold a owl:Class ;
 
 ex:Pneumonia a owl:Class ;
     rdfs:subClassOf ex:RespiratoryDisease .
+
+ex:LegacyDisease a owl:Class .

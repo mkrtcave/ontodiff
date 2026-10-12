@@ -1,7 +1,7 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
-import cz.cvut.fel.ontodiff.EdgeFact;
+import cz.cvut.fel.ontodiff.utils.EdgeFact;
 import cz.cvut.fel.ontodiff.properties.SynonymPropety;
 import cz.cvut.fel.ontodiff.properties.TextDefinitionProperties;
 import org.semanticweb.owlapi.model.*;

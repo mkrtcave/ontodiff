@@ -1,6 +1,6 @@
 package cz.cvut.fel.ontodiff.statesearch;
 
-import cz.cvut.fel.ontodiff.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.DiffResult;
 import org.semanticweb.owlapi.model.OWLAxiom;
 

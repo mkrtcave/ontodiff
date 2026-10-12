@@ -1,8 +1,8 @@
 package cz.cvut.fel.ontodiff;
 
-import cz.cvut.fel.ontodiff.generators.CandidateGenerator;
-import cz.cvut.fel.ontodiff.generators.NodeCreationCandidateGenerator;
-import cz.cvut.fel.ontodiff.generators.NodeMoveCandidateGenerator;
+import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.FallbackChanges;
+import cz.cvut.fel.ontodiff.generators.*;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffServiceImpl;
 import cz.cvut.fel.ontodiff.service.OWLDiffOntologyDiffService;
 import cz.cvut.fel.ontodiff.service.OntologyDiffService;
@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Diff {
@@ -23,8 +24,11 @@ public class Diff {
     }
     public void diff(){
 
-        String u1 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/node-move-v1.ttl";
-        String u2 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/node-move-v2.ttl";
+//        String u1 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/inters/intersection-v1.ttl";
+//        String u2 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/inters/intersection-v2.ttl";
+
+        String u1 = "file:/D:/apollo_sv(1).owl";
+        String u2 = "file:/D:/apollo_sv.owl";
 
         try {
             final OWLOntologyManager originalM = OWLManager.createOWLOntologyManager();
@@ -38,8 +42,11 @@ public class Diff {
             DiffResult diffResult = service.diff(originalO, updateO, Engine.SYNTACTIC);
 
             List<CandidateGenerator> generators = List.of(
+                    new EdgeCreationCandidateGenerator(),
+                    new EdgeDeletionCandidateGenerator(),
                     new NodeMoveCandidateGenerator(),
-                    new NodeCreationCandidateGenerator()
+                    new NodeCreationCandidateGenerator(),
+                    new NodeDeletionCandidateGenerator()
         //                    new PredicateChangeCandidateGenerator(),
 //                    new NodeRenameCandidateGenerator()
             );
@@ -48,9 +55,24 @@ public class Diff {
                     .flatMap(generator -> generator.generate(diffResult))
                     .toList();
 
+            System.out.println("Diff: " + diffResult.getOnlyInOriginal().size() + " removed, "
+                    + diffResult.getOnlyInUpdate().size() + " added");
+
+            System.out.println("Candidates: " + candidates.size());
+            System.out.println("Starting search");
+
             StateSpaceSearch search = new StateSpaceSearch();
 
             SearchState result = search.search(diffResult, candidates);
+
+            List<ChangeCandidate> finalChanges = new ArrayList<>(result.selectedCandidates());
+
+            finalChanges.addAll(FallbackChanges.create(diffResult, result));
+
+            for(ChangeCandidate change : finalChanges){
+                System.out.println(change.change());
+            }
+
 
             System.out.println("Goal" + result.isGoal());
 
@@ -59,7 +81,6 @@ public class Diff {
             for (ChangeCandidate selected : result.selectedCandidates()) {
                 System.out.println(selected.change());
             }
-
 
             HighLevelDiffServiceImpl diffService = new HighLevelDiffServiceImpl();
 
