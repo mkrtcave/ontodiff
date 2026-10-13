@@ -7,14 +7,20 @@ import java.util.Set;
 
 public interface HighLevelDiffService {
 
+    // implemented
     record NodeCreation(String iri) implements ProposedChange {}
     record NodeDeletion(String iri) implements ProposedChange {}
-    record NodeObsoletion(String iri, String reason) implements ProposedChange {}
-    record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
     record EdgeCreation(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record EdgeDeletion(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
-    record ClassCreation(String iri) implements ProposedChange {}
     record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) implements ProposedChange {}
+    record PlaceUnder(String childIri, String parentIri) implements ProposedChange {}
+    record RemoveUnder(String childIri, String parentIri) implements ProposedChange {}
+    record AddNodeToSubset(String nodeIri, String subsetIri) implements ProposedChange {}
+    record RemoveNodeFromSubset(String nodeIri, String subsetIri) implements ProposedChange {}
+
+    record NodeObsoletion(String iri, String reason) implements ProposedChange {}
+    record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
+    record ClassCreation(String iri) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
     record PredicateChange(String srcIri, String oldPrpIri, String newPrpIri) implements ProposedChange {}
     record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
@@ -23,8 +29,6 @@ public interface HighLevelDiffService {
     record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) implements ProposedChange {}
     record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
     record RemoveSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
-    record PlaceUnder(String childIri, String parentIri) implements ProposedChange {}
-    record RemoveUnder(String childIri, String parentIri) implements ProposedChange {}
 
     record HighLevelDiff(
             Set<NodeCreation> nodeCreations,

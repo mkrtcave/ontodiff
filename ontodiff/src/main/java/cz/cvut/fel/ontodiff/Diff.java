@@ -48,7 +48,8 @@ public class Diff {
                     new NodeCreationCandidateGenerator(),
                     new NodeDeletionCandidateGenerator(),
                     new PlaceUnderCandidateGenerator(),
-                    new RemoveUnderCandidateGenerator()
+                    new RemoveUnderCandidateGenerator(),
+                    new SubsetCandidateGenerator()
             );
 
             List<ChangeCandidate> candidates = generators.stream()
