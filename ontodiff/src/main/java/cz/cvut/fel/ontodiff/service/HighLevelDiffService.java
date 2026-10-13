@@ -23,6 +23,8 @@ public interface HighLevelDiffService {
     record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) implements ProposedChange {}
     record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
     record RemoveSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
+    record PlaceUnder(String childIri, String parentIri) implements ProposedChange {}
+    record RemoveUnder(String childIri, String parentIri) implements ProposedChange {}
 
     record HighLevelDiff(
             Set<NodeCreation> nodeCreations,
@@ -39,7 +41,9 @@ public interface HighLevelDiffService {
             Set<RemoveTextDefinition> removeTextDefinitions,
             Set<NodeTextDefinitionChange> nodeTextDefinitionChanges,
             Set<NewSynonym> newSynonyms,
-            Set<RemoveSynonym> removeSynonyms
+            Set<RemoveSynonym> removeSynonyms,
+            Set<PlaceUnder> placeUnders,
+            Set<RemoveUnder> removeUnders
     ) {}
 
     HighLevelDiff from(DiffResult diffResult);

@@ -665,7 +665,8 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         Set<NodeTextDefinitionChange> nodeTextDefinitionChanges = computeNodeTextDefinitionChanges(diffResult);
         Set<NewSynonym> newSynonyms = computeNewSynonyms(diffResult);
         Set<RemoveSynonym> removeSynonyms = computeRemoveSynonyms(diffResult);
-
+        Set<PlaceUnder> placeUnders = null;
+        Set<RemoveUnder> removeUnders = null;
         return new HighLevelDiff(
                 nodeCreations,
                 nodeDeletions,
@@ -681,7 +682,10 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
                 removeTextDefinitions,
                 nodeTextDefinitionChanges,
                 newSynonyms,
-                removeSynonyms
+                removeSynonyms,
+                placeUnders,
+                removeUnders
+
         );
     }
 }

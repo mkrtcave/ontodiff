@@ -16,10 +16,10 @@ public class EdgeDeletionCandidateGenerator implements CandidateGenerator {
 
     @Override
     public Stream<ChangeCandidate> generate(DiffResult diff) {
-        return diff.getOnlyInOriginal()
-                .stream()
+        return diff.getOnlyInOriginal().stream()
                 .map(edgeExtractor::extract)
                 .flatMap(Optional::stream)
+                .filter(edge -> !SimpleEdgeExtractor.SUBCLASS_OF.equals(edge.predicate()))
                 .map(this::createCandidate);
     }
 

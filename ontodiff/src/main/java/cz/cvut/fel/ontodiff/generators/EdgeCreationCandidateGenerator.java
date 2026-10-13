@@ -16,10 +16,10 @@ public class EdgeCreationCandidateGenerator implements CandidateGenerator {
 
     @Override
     public Stream<ChangeCandidate> generate(DiffResult diff) {
-        return diff.getOnlyInUpdate()
-                .stream()
+        return diff.getOnlyInUpdate().stream()
                 .map(edgeExtractor::extract)
                 .flatMap(Optional::stream)
+                .filter(edge -> !SimpleEdgeExtractor.SUBCLASS_OF.equals(edge.predicate()))
                 .map(this::createCandidate);
     }
 
@@ -27,8 +27,7 @@ public class EdgeCreationCandidateGenerator implements CandidateGenerator {
         HighLevelDiffService.EdgeCreation creation = new HighLevelDiffService.EdgeCreation(
                         edge.subject(),
                         edge.predicate(),
-                        edge.object()
-                );
+                        edge.object());
 
         return new ChangeCandidate(
                 creation,
