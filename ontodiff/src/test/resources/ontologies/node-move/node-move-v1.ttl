@@ -4,7 +4,8 @@
 
 <http://example.org/disease-ontology> a owl:Ontology .
 
-# The same classes are declared in both versions. Only their parents change.
+# All classes are declared in both versions. A move removes one SubClassOf
+# axiom and adds another for the same child; no node is created or deleted.
 
 ex:Disease a owl:Class .
 
@@ -23,4 +24,3 @@ ex:CommonCold a owl:Class ;
 ex:Pneumonia a owl:Class ;
     rdfs:subClassOf ex:RespiratoryDisease .
 
-ex:LegacyDisease a owl:Class .

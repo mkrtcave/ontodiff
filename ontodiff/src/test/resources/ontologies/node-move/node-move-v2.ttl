@@ -4,8 +4,8 @@
 
 <http://example.org/disease-ontology> a owl:Ontology .
 
-# Influenza and CommonCold moved under RespiratoryDisease.
-# Pneumonia moved under InfectiousDisease.
+# Only the parent edges change: Influenza and CommonCold move under
+# RespiratoryDisease, while Pneumonia moves under InfectiousDisease.
 
 ex:Disease a owl:Class .
 
@@ -24,4 +24,3 @@ ex:CommonCold a owl:Class ;
 ex:Pneumonia a owl:Class ;
     rdfs:subClassOf ex:InfectiousDisease .
 
-ex:Bronchitis a owl:Class .
