@@ -17,12 +17,13 @@ public interface HighLevelDiffService {
     record RemoveUnder(String childIri, String parentIri) implements ProposedChange {}
     record AddNodeToSubset(String nodeIri, String subsetIri) implements ProposedChange {}
     record RemoveNodeFromSubset(String nodeIri, String subsetIri) implements ProposedChange {}
+    record PredicateChange(String srcIri,String tgtIri, String oldPrpIri, String newPrpIri) implements ProposedChange {}
+
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
     record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
     record ClassCreation(String iri) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
-    record PredicateChange(String srcIri, String oldPrpIri, String newPrpIri) implements ProposedChange {}
     record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
     record NewTextDefinition(String classIri, String definition) implements ProposedChange {}
     record RemoveTextDefinition(String classIri, String definition) implements ProposedChange {}

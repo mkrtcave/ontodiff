@@ -381,7 +381,7 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
             for (String oldP : oldPred) {
                 for (String newP : newPred) {
                     if (oldP.equals(newP)) continue;
-                    result.add(new PredicateChange(key.srcIri(), oldP, newP));
+                    result.add(new PredicateChange(key.srcIri(), key.tgtIri(), oldP, newP));
                 }
             }
         }

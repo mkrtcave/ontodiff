@@ -49,7 +49,8 @@ public class Diff {
                     new NodeDeletionCandidateGenerator(),
                     new PlaceUnderCandidateGenerator(),
                     new RemoveUnderCandidateGenerator(),
-                    new SubsetCandidateGenerator()
+                    new SubsetCandidateGenerator(),
+                    new PredicateChangeCandidateGenerator()
             );
 
             List<ChangeCandidate> candidates = generators.stream()
