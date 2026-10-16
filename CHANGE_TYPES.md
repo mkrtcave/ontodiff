@@ -1,14 +1,22 @@
 # Ontology change types
 
-| Change type | Meaning | Evidence recognized by the current generator |
-| --- | --- | --- |
-| `NodeCreation` | A new class appears. | An added class declaration whose class IRI is absent from the original ontology's signature. |
-| `NodeDeletion` | A class disappears. | A removed class declaration whose class IRI is absent from the updated ontology's signature. Its candidate also covers removed annotations on that class and removed `SubClassOf` axioms with that class as the subclass. |
-| `PlaceUnder` | Give a class a parent. | Added `SubClassOf(A B)` with named classes `A` and `B`. |
-| `RemoveUnder` | Remove a class's parent. | Removed `SubClassOf(A B)` with named classes `A` and `B`. |
-| `NodeMove` | Change a class's parent. | Removed `SubClassOf(A B)` and added `SubClassOf(A C)` for the same named child `A` and different named parents. |
-| `EdgeCreation` | Add a non-subclass relationship between classes. | Added `SubClassOf(A ObjectSomeValuesFrom(p B))` with named class `A`, named property `p`, and named class `B`; reported as `(A, p, B)`. |
-| `EdgeDeletion` | Remove a non-subclass relationship between classes. | The removed version of the same `ObjectSomeValuesFrom` pattern. |
-| `PredicateChange` | Change the relationship type while keeping its endpoints. | A removed edge `(A, p, B)` and an added edge `(A, q, B)` where `p != q`. Either predicate may be `rdfs:subClassOf`. |
-| `AddNodeToSubset` | Add a node to a subset. | Added `oboInOwl:inSubset` annotation assertion with an IRI subject and IRI subset value. |
-| `RemoveNodeFromSubset` | Remove a node from a subset. | Removed version of that `oboInOwl:inSubset` annotation assertion. |
+OntoDiff currently compares only **OWL axioms**, not RDF triples yet. Let `R` be the axioms found only in the original ontology and `A` the axioms found only in the updated ontology. A candidate change has **removed evidence** from `R` and **added evidence** from `A`. Applying a candidate consumes that evidence, so another selected candidate cannot explain the same axiom.
+
+An **atomic** change consumes one OWL axiom ( e.g. addition or removal). A **compound** change consumes two or more axioms. This counts evidence, not the number of meaningful operations: `NodeMove` is one operation explained by two axiom changes. A single OWL axiom, especially one containing a restriction, may be represented by several RDF triples and blank nodes.
+
+In the table, `C`, `P`, and `Q` are named classes. For `EdgeCreation` and `EdgeDeletion`, `p` is a named object property; in `PredicateChange`, `p` and `q` can also be `rdfs:subClassOf`. `AnnotationAssertion(prop C value)` means an annotation whose subject is the IRI of `C`. `edge(C, p, P)` is shorthand for `SubClassOf(C ObjectSomeValuesFrom(p P))`; `edge(C, rdfs:subClassOf, P)` means `SubClassOf(C P)`.
+
+| Change type | Removed evidence | Added evidence | Condition                                                                                                                      |
+| --- | --- | --- |--------------------------------------------------------------------------------------------------------------------------------|
+| `NodeCreation(C)` | — | `Declaration(Class(C))`, plus any added annotations on `C` and outgoing `SubClassOf(C X)` axioms | Compound. Requires `C` to be absent from the original class signature.                                                         |
+| `NodeDeletion(C)` | `Declaration(Class(C))`, plus any removed annotations on `C` and outgoing `SubClassOf(C X)` axioms | — | Compound. Requires `C` to be absent from the updated class signature.                                                          |
+| `PlaceUnder(C, P)` | — | `SubClassOf(C P)` | Atomic.                                                                                                                        |
+| `RemoveUnder(C, P)` | `SubClassOf(C P)` | — | Atomic.                                                                                                                        |
+| `NodeMove(C, P, Q)` | `SubClassOf(C P)` | `SubClassOf(C Q)` | Compound; `P` and `Q` must differ.                                                                                             |
+| `EdgeCreation(C, p, P)` | — | `edge(C, p, P)` | Atomic. This is a class restriction, not an arbitrary RDF triple or creation of the property entity `p`.                       |
+| `EdgeDeletion(C, p, P)` | `edge(C, p, P)` | — | Atomic; the reverse of `EdgeCreation`.                                                                                         |
+| `PredicateChange(C, P, p, q)` | `edge(C, p, P)` | `edge(C, q, P)` | Compound; `p` and `q` must differ. Either side can instead use `rdfs:subClassOf` and its corresponding `SubClassOf(C P)` axiom. |
+| `AddNodeToSubset(C, S)` | — | `AnnotationAssertion(oboInOwl:inSubset C S)` | Atomic; `C` and `S` are IRIs.                                                                                                  |
+| `RemoveNodeFromSubset(C, S)` | `AnnotationAssertion(oboInOwl:inSubset C S)` | — | Atomic; the reverse of `AddNodeToSubset`.                                                                                      |
+
+These are **candidate patterns**, not guaranteed final classifications. For example, removing `SubClassOf(C P)` and adding `SubClassOf(C Q)` produces a `NodeMove` candidate as well as separate `RemoveUnder` and `PlaceUnder` candidates. The search chooses a non-overlapping explanation according to candidate cost. A class creation/deletion candidate can also consume annotations and outgoing subclass axioms that otherwise would be separate changes. 

@@ -11,6 +11,8 @@ OntoDiff uses the syntactic OWLDiff result as its input:
 3. Select a non-overlapping set of candidates using a cost-based state search.
 4. Report remaining axioms as annotation or axiom additions/removals.
 
-The current candidate generators cover class creation/deletion, subclass placement/removal, node moves, simple relationship creation/deletion, predicate changes, and subset membership changes. See [CHANGE_TYPES.md](CHANGE_TYPES.md) for the exact change types.
+The current candidate generators cover class creation/deletion, subclass placement/removal, node moves, simple relationship creation/deletion, predicate changes, and subset membership changes. [CHANGE_TYPES.md](CHANGE_TYPES.md) defines the removed and added OWL-axiom evidence for each type and identifies changes that currently fall back to generic axiom or annotation additions/removals.
+
+For example, `NodeMove(Flu, Disease, RespiratoryDisease)` is one meaningful change backed by two axioms: remove `SubClassOf(Flu Disease)` and add `SubClassOf(Flu RespiratoryDisease)`. Each side alone could instead be described as `RemoveUnder` or `PlaceUnder`; the search chooses a non-overlapping explanation. We call a change **atomic** if it consumes one axiom, and **compound** if it consumes two or more.
 
 OntoDiff currently works from OWL axioms, not an RDF triple diff or semantic entailments. The `ontodiff` module requires Java 17.
