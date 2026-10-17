@@ -24,6 +24,9 @@ public interface HighLevelDiffService {
             OWLClassExpression oldExpression,
             OWLClassExpression newExpression
     ) implements ProposedChange {}
+    record CommentChange(String subjectIri, String oldComment, String newComment) implements ProposedChange {}
+    record CommentAddition(String subjectIri, String comment) implements ProposedChange {}
+    record CommentRemoval(String subjectIri, String comment) implements ProposedChange {}
 
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
