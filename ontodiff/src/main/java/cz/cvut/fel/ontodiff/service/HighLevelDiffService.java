@@ -27,18 +27,18 @@ public interface HighLevelDiffService {
     record CommentChange(String subjectIri, String oldComment, String newComment) implements ProposedChange {}
     record CommentAddition(String subjectIri, String comment) implements ProposedChange {}
     record CommentRemoval(String subjectIri, String comment) implements ProposedChange {}
+    record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
+    record RemoveSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
+    record SynonymReplacement(String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
 
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
-    record SynonymReplacement( String entityIri, String propertyIri, String oldSynonym, String newSynonym) implements ProposedChange {}
     record ClassCreation(String iri) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
     record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
     record NewTextDefinition(String classIri, String definition) implements ProposedChange {}
     record RemoveTextDefinition(String classIri, String definition) implements ProposedChange {}
     record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) implements ProposedChange {}
-    record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
-    record RemoveSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
 
     record HighLevelDiff(
             Set<NodeCreation> nodeCreations,

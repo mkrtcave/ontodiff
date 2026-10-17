@@ -48,6 +48,7 @@ public class Diff {
                     new NodeRenameCandidateGenerator(),
                     new CommentChangeCandidateGenerator(),
                     new CommentAdditionRemovalCandidateGenerator(),
+                    new SynonymCandidateGenerator(),
                     new EquivalentClassesChangeCandidateGenerator(),
                     new NodeCreationCandidateGenerator(),
                     new NodeDeletionCandidateGenerator(),
