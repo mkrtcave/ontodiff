@@ -6,33 +6,92 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-ond:DiffRun a owl:Class ;
-    rdfs:label "Diff run between ontology versions" ;
-    rdfs:subClassOf prov:Activity .
+<https://w3id.org/ontodiff/schema> a owl:Ontology ;
+    rdfs:label "OntoDiff Ontology"@en ;
+    owl:versionInfo "1.0.0" .
+
+# Classes
 
 ond:DiffProject a owl:Class ;
     rdfs:label "Ontology diff project" ;
     rdfs:subClassOf prov:Entity .
 
-ond:fromOntology a owl:ObjectProperty ;
+ond:DiffRun a owl:Class ;
+    rdfs:label "Diff run between ontology versions" ;
+    rdfs:subClassOf prov:Activity .
+
+ond:DiffResult a owl:Class ;
+    rdfs:label "Ontology diff result"@en ;
+    rdfs:subClassOf prov:Entity .
+
+ond:OntologyVersion a owl:Class ;
+    rdfs:label "Ontology version"@en ;
+    rdfs:subClassOf prov:Entity .
+
+# diff output properties
+
+ond:fromOntology a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "from ontology"@en ;
     rdfs:domain ond:DiffRun ;
     rdfs:range  ond:OntologyVersion ;
     rdfs:label  "from ontology" .
 
-ond:toOntology a owl:ObjectProperty ;
+ond:toOntology a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "to ontology"@en ;
     rdfs:domain ond:DiffRun ;
     rdfs:range  ond:OntologyVersion ;
     rdfs:label  "to ontology" .
 
-ond:hasKgclTransaction a owl:ObjectProperty ;
-    rdfs:domain ond:DiffRun ;
-    rdfs:range  kgcl:Transaction ;
-    rdfs:label  "has KGCL transaction" .
+# Project
 
 ond:inProject a owl:ObjectProperty ;
+    rdfs:label "in diff project"@en ;
     rdfs:domain ond:DiffRun ;
     rdfs:range  ond:DiffProject ;
-    rdfs:label  "in diff project" .
+    owl:inverseOf ond:hasRun .
+
+ond:hasRun a owl:ObjectProperty ;
+    rdfs:label "has diff run"@en ;
+    rdfs:domain ond:DiffProject ;
+    rdfs:range ond:DiffRun
+
+# Result
+
+ond:result a owl:ObjectProperty ;
+    rdfs:label "diff result"@en ;
+    rdfs:domain ond:DiffRun ;
+    rdfs:range ond:DiffResult .
+
+ond:hasKglTransaction a owl:ObjectProperty ;
+    rdfs:label "has KGCL transaction"@en ;
+    rdfs:domain ond:DiffResult ;
+    rdfs:range kgcl:Transaction .
+
+# Software
+
+ond:usedTool a owl:ObjectProperty ;
+    rdfs:label "used tool"@en ;
+    rdfs:domain ond:DiffRun ;
+    rdfs:range prov:SoftwareAgent .
+
+ond:softwareVersion a owl:DatatypeProperty ;
+    rdfs:label "software version"@en ;
+    rdfs:domain prov:SoftwareAgent ;
+    rdfs:range xsd:string .
+
+# Ontology version metadata
+
+ond:ontologyIRI a owl:DatatypeProperty ;
+    rdfs:domain ond:OntologyVersion ;
+    rdfs:range xsd:anyURI .
+
+ond:versionIRI a owl:DatatypeProperty ;
+    rdfs:domain ond:OntologyVersion ;
+    rdfs:range xsd:anyURI .
+
+ond:versionInfo a owl:DatatypeProperty ;
+    rdfs:domain ond:OntologyVersion ;
+    rdfs:range xsd:string .
 
 ond:usesAlgorithm a owl:DatatypeProperty ;
     rdfs:domain ond:DiffRun ;

@@ -1,44 +1,20 @@
-# OWLDiff
+# OWLDiff and OntoDiff
 
-A tool to perform a 2-way diff of OWL ontologies.
+OWLDiff compares two versions of an OWL ontology. This repository also contains **OntoDiff**, an experimental layer that turns axiom-level differences into descriptions of ontology changes.
 
-## Requirements
-- Java 14
+## How OntoDiff works
 
-## Features
-- syntactic diff/merge functionality
-- explanations for inferred axioms
-- various visualization options - Manchester/DL syntax, classified view, plain axiom list
-- fully semantic diff for EL using the CEX algorithm.
-- easy Subversion integration
-    
-### PLAIN (SYNTACTIC) DIFF
-- is provides an axiom by axiom difference of the ontologies
-- different axioms are shown in 'green', the common parts are blue (and hidden by default).
-		
-### ENTAILMENT CHECK
-- for each axiom that is not contained in the other ontology an entailment check tests whether it can be derived from the other ontology or not.
-- entailed axioms are shown in 'red' 
-- for inconsistent ontologies the entailment check is disabled
+OntoDiff uses the syntactic OWLDiff result as its input:
 
-### CEX DIFF
-- if either of the ontologies is not EL, no CEX is performed
-- axioms with colored background denote those that appear either in DiffR or DiffL list - they represent semantic differences between the classes the semantics of whose has changed 
-	  (as described in http://www.webont.org/owled/2008dc/papers/owled2008dc_paper_12.pdf)
+1. Find OWL axioms present only in the original ontology or only in the updated ontology.
+2. Generate possible high-level changes from those added and removed axioms.
+3. Select a non-overlapping set of candidates using a cost-based state search.
+4. Report remaining axioms as annotation or axiom additions/removals.
 
-### ENTAILMENT EXPLANATIONS
-- the incremental algorithm for single explanation generation is used (as described in Křemen, P. - Kouba, Z.: Incremental Approach to Error Explanations in Ontologies. In Proceedings of I-KNOW `07. Graz: Graz University of Technology, 2007, p. 332-339. ISSN 0948-695X )
+The current candidate generators cover class creation/deletion, subclass placement/removal, node moves, class label renames, `rdfs:comment` changes, changes to equivalent class definitions, simple relationship creation/deletion, predicate changes, and subset membership changes. [CHANGE_TYPES.md](CHANGE_TYPES.md) defines the removed and added OWL-axiom evidence for each type and identifies changes that currently fall back to generic axiom or annotation additions/removals.
 
-## Known Limitations
-- imports are currently NOT resolved
-- just one explanation generated for a single axiom - TODO provide the possibility to get all explanations
-- usually the only sensible use is to compare ontologies with the same URI - no check is performed to find out whether the ontology/class/property/individual URI changed.
+For example, `NodeMove(Flu, Disease, RespiratoryDisease)` is one meaningful change backed by two axioms: remove `SubClassOf(Flu Disease)` and add `SubClassOf(Flu RespiratoryDisease)`. Each side alone could instead be described as `RemoveUnder` or `PlaceUnder`; the search chooses a non-overlapping explanation. We call a change **atomic** if it consumes one axiom, and **compound** if it consumes two or more.
 
-## How to run it?
-- to show the GUI without setting the input files in advance run
-			'java -jar owldiff.jar' (or the convenience script 'owldiff' on linux)
-- to perform the diff of file/URI <u1> and file/URI <u2> run
-			'java -jar owldiff.jar <u1> <u2>' (or the convenience script 'owldiff <u1> <u2>' on linux)
+`NodeRename` similarly pairs an old and a new `rdfs:label` assertion for the same existing class when their language and datatype match. Unpaired labels remain annotation additions or removals.
 
-* * *
-2020 Czech Technical University, Knowledge Based and Software Systems Group
+OntoDiff currently works from OWL axioms, not an RDF triple diff or semantic entailments. The `ontodiff` module requires Java 17.
