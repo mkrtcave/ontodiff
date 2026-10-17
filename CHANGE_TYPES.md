@@ -14,25 +14,11 @@ In the table, `C`, `P`, and `Q` are named classes. For `EdgeCreation` and `EdgeD
 | `RemoveUnder(C, P)` | `SubClassOf(C P)` | — | Atomic.                                                                                                                        |
 | `NodeMove(C, P, Q)` | `SubClassOf(C P)` | `SubClassOf(C Q)` | Compound; `P` and `Q` must differ.                                                                                             |
 | `NodeRename(C, old, new)` | `AnnotationAssertion(rdfs:label C old)` | `AnnotationAssertion(rdfs:label C new)` | Compound. `C` must remain a class in both versions; labels must have the same language and datatype, with one unambiguous pairing. |
+| `EquivalentClassesChange(C, old, new)` | `EquivalentClasses(C old)` | `EquivalentClasses(C new)` | Compound. Each axiom must have exactly two operands: the same named class `C` and one anonymous class expression. The old/new pairing must be unambiguous and the expressions must differ. |
 | `EdgeCreation(C, p, P)` | — | `edge(C, p, P)` | Atomic. This is a class restriction, not an arbitrary RDF triple or creation of the property entity `p`.                       |
 | `EdgeDeletion(C, p, P)` | `edge(C, p, P)` | — | Atomic; the reverse of `EdgeCreation`.                                                                                         |
 | `PredicateChange(C, P, p, q)` | `edge(C, p, P)` | `edge(C, q, P)` | Compound; `p` and `q` must differ. Either side can instead use `rdfs:subClassOf` and its corresponding `SubClassOf(C P)` axiom. |
 | `AddNodeToSubset(C, S)` | — | `AnnotationAssertion(oboInOwl:inSubset C S)` | Atomic; `C` and `S` are IRIs.                                                                                                  |
 | `RemoveNodeFromSubset(C, S)` | `AnnotationAssertion(oboInOwl:inSubset C S)` | — | Atomic; the reverse of `AddNodeToSubset`.                                                                                      |
 
-These are **candidate patterns**, not guaranteed final classifications. For example, removing `SubClassOf(C P)` and adding `SubClassOf(C Q)` produces a `NodeMove` candidate as well as separate `RemoveUnder` and `PlaceUnder` candidates. The search chooses a non-overlapping explanation according to candidate cost. A class creation/deletion candidate can also consume annotations and outgoing subclass axioms that otherwise would be separate changes. 
-
-For labels, only an unambiguous old/new pair on the same existing class becomes `NodeRename`. A label added or removed on its own, a language/datatype change, or multiple changed labels with no unique pairing remains `AnnotationAddition` or `AnnotationRemoval` after the search. The candidate records the old and new text; its evidence axioms retain the full literals, including language and datatype.
-
-### `NodeRename` example
-
-Suppose the class IRI `http://example.org/Flu` exists in both ontology versions, but its English label changes:
-
-```text
-Removed: AnnotationAssertion(rdfs:label <http://example.org/Flu> "Influenza"@en)
-Added:   AnnotationAssertion(rdfs:label <http://example.org/Flu> "Flu"@en)
-
-Result:  NodeRename(http://example.org/Flu, "Influenza", "Flu")
-```
-
-The generator proposes one `NodeRename` with the removed and added assertions as evidence. The state search consumes both if it selects that candidate, rather than reporting two annotation fallbacks. This is one meaningful operation with **compound evidence** (two OWL axioms). Only the display label changes: `http://example.org/Flu` remains the same IRI, so this is **not an IRI rename**.
+These are **candidate patterns**, not guaranteed final classifications. For example, removing `SubClassOf(C P)` and adding `SubClassOf(C Q)` produces a `NodeMove` candidate as well as separate `RemoveUnder` and `PlaceUnder` candidates. The search chooses a non-overlapping explanation according to candidate cost. A class creation/deletion candidate can also consume annotations and outgoing subclass axioms that otherwise would be separate changes.

@@ -46,6 +46,7 @@ public class Diff {
                     new EdgeDeletionCandidateGenerator(),
                     new NodeMoveCandidateGenerator(),
                     new NodeRenameCandidateGenerator(),
+                    new EquivalentClassesChangeCandidateGenerator(),
                     new NodeCreationCandidateGenerator(),
                     new NodeDeletionCandidateGenerator(),
                     new PlaceUnderCandidateGenerator(),

@@ -2,6 +2,7 @@ package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
 import cz.cvut.fel.ontodiff.changes.ProposedChange;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import java.util.Set;
 
@@ -18,6 +19,11 @@ public interface HighLevelDiffService {
     record AddNodeToSubset(String nodeIri, String subsetIri) implements ProposedChange {}
     record RemoveNodeFromSubset(String nodeIri, String subsetIri) implements ProposedChange {}
     record PredicateChange(String srcIri,String tgtIri, String oldPrpIri, String newPrpIri) implements ProposedChange {}
+    record EquivalentClassesChange(
+            String classIri,
+            OWLClassExpression oldExpression,
+            OWLClassExpression newExpression
+    ) implements ProposedChange {}
 
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
