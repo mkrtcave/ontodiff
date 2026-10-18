@@ -10,6 +10,7 @@ public interface HighLevelDiffService {
 
     // implemented
     record NodeCreation(String iri) implements ProposedChange {}
+    record ClassCreation(String iri) implements ProposedChange {}
     record NodeDeletion(String iri) implements ProposedChange {}
     record EdgeCreation(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record EdgeDeletion(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
@@ -33,7 +34,6 @@ public interface HighLevelDiffService {
 
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
-    record ClassCreation(String iri) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
     record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
     record NewTextDefinition(String classIri, String definition) implements ProposedChange {}

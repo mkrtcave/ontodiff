@@ -25,6 +25,7 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         created.removeAll(originalEntities);
 
         return created.stream()
+                .filter(e -> !e.isOWLClass())
                 .map(e -> new NodeCreation(e.getIRI().getIRIString()))
                 .collect(Collectors.toSet());
     }

@@ -50,6 +50,7 @@ public class Diff {
                     new CommentAdditionRemovalCandidateGenerator(),
                     new SynonymCandidateGenerator(),
                     new EquivalentClassesChangeCandidateGenerator(),
+                    new ClassCreationCandidateGenerator(),
                     new NodeCreationCandidateGenerator(),
                     new NodeDeletionCandidateGenerator(),
                     new PlaceUnderCandidateGenerator(),
