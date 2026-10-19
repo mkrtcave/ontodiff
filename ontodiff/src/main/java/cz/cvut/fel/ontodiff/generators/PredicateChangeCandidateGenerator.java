@@ -13,6 +13,12 @@ public class PredicateChangeCandidateGenerator implements CandidateGenerator {
 
     private final SimpleEdgeExtractor extractor = new SimpleEdgeExtractor();
 
+    private record PredicatePair(
+            HighLevelDiffService.SrcTgt endpoints,
+            EdgeFact removed,
+            EdgeFact added
+    ) {}
+
     @Override
     public Stream<ChangeCandidate> generate(DiffResult diff) {
         Map<HighLevelDiffService.SrcTgt, List<EdgeFact>> addedByEndpoints =
@@ -27,7 +33,9 @@ public class PredicateChangeCandidateGenerator implements CandidateGenerator {
                     addedByEndpoints.computeIfAbsent(key, ignored -> new ArrayList<>()).add(added);
                 });
 
-        List<ChangeCandidate> candidates = new ArrayList<>();
+        List<PredicatePair> compatiblePairs = new ArrayList<>();
+        Map<HighLevelDiffService.SrcTgt, Integer> pairCountByEndpoints =
+                new HashMap<>();
 
         diff.getOnlyInOriginal().stream()
                 .map(extractor::extract)
@@ -39,22 +47,38 @@ public class PredicateChangeCandidateGenerator implements CandidateGenerator {
                         if (removed.predicate().equals(added.predicate())) {
                             continue;
                         }
-                        candidates.add(new ChangeCandidate(
-                                new HighLevelDiffService.PredicateChange(
-                                        removed.subject(),
-                                        removed.object(),
-                                        removed.predicate(),
-                                        added.predicate()
-                                ),
-                                Set.of(removed.sourceAxiom()),
-                                Set.of(added.sourceAxiom()),
-                                0.8,
-                                1,
-                                "same-endpoints-different-predicate"
-                        ));
+                        compatiblePairs.add(new PredicatePair(key, removed, added));
+                        pairCountByEndpoints.merge(key, 1, Integer::sum);
                     }
                 });
 
-        return candidates.stream();
+        return compatiblePairs.stream()
+                .map(pair -> createCandidate(
+                        pair,
+                        pairCountByEndpoints.get(pair.endpoints())
+                ));
+    }
+
+    private ChangeCandidate createCandidate(PredicatePair pair,
+                                            int compatiblePairings) {
+        EdgeFact removed = pair.removed();
+        EdgeFact added = pair.added();
+
+        return new ChangeCandidate(
+                new HighLevelDiffService.PredicateChange(
+                        removed.subject(),
+                        removed.object(),
+                        removed.predicate(),
+                        added.predicate()
+                ),
+                Set.of(removed.sourceAxiom()),
+                Set.of(added.sourceAxiom()),
+                CandidateConfidence.adjustedForAmbiguity(
+                        CandidateConfidence.WEAK_INTERPRETATION,
+                        compatiblePairings
+                ),
+                1,
+                "same-endpoints-different-predicate"
+        );
     }
 }

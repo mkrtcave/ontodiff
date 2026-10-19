@@ -48,6 +48,8 @@ public class CommentChangeCandidateGeneratorTest {
                 candidate.change());
         assertEquals(Set.of(oldComment), candidate.removedEvidence());
         assertEquals(Set.of(newComment), candidate.addedEvidence());
+        assertEquals(CandidateConfidence.UNAMBIGUOUS_PAIR,
+                candidate.confidence(), 0.0);
         assertEquals(1, candidate.cost());
 
         SearchState result = new StateSpaceSearch().search(diff, candidates);

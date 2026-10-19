@@ -33,7 +33,7 @@ public class EdgeCreationCandidateGenerator implements CandidateGenerator {
                 creation,
                 Set.of(),
                 Set.of(edge.sourceAxiom()),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "added-simple-edge"
         );

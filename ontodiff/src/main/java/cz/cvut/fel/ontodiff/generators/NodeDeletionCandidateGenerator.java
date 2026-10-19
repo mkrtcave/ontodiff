@@ -65,7 +65,7 @@ public class NodeDeletionCandidateGenerator implements CandidateGenerator {
                 ),
                 removedEvidence,
                 Set.of(),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "deleted-class-and-owned-axioms"
         );

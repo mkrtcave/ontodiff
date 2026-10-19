@@ -52,7 +52,7 @@ public class EquivalentClassesChangeCandidateGenerator implements CandidateGener
                     ),
                     Set.of(oldFact.sourceAxiom()),
                     Set.of(newFact.sourceAxiom()),
-                    1.0,
+                    CandidateConfidence.UNAMBIGUOUS_PAIR,
                     1,
                     "same-class-different-equivalent-expression"
             ));

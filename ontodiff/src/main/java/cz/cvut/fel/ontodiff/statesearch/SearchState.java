@@ -13,12 +13,36 @@ public record SearchState(
         Set<OWLAxiom> unexplainedRemoved,
         Set<OWLAxiom> unexplainedAdded,
         List<ChangeCandidate> selectedCandidates,
-        int cost
+        int cost,
+        double confidencePenalty
 ) {
     public SearchState {
+        if (!Double.isFinite(confidencePenalty) || confidencePenalty < 0.0) {
+            throw new IllegalArgumentException(
+                    "Confidence penalty must be finite and non-negative: "
+                            + confidencePenalty
+            );
+        }
         unexplainedRemoved = Set.copyOf(unexplainedRemoved);
         unexplainedAdded = Set.copyOf(unexplainedAdded);
         selectedCandidates = List.copyOf(selectedCandidates);
+    }
+
+    public SearchState(
+            Set<OWLAxiom> unexplainedRemoved,
+            Set<OWLAxiom> unexplainedAdded,
+            List<ChangeCandidate> selectedCandidates,
+            int cost
+    ) {
+        this(
+                unexplainedRemoved,
+                unexplainedAdded,
+                selectedCandidates,
+                cost,
+                selectedCandidates.stream()
+                        .mapToDouble(SearchState::confidencePenaltyOf)
+                        .sum()
+        );
     }
 
     public static SearchState initial(DiffResult diff) {
@@ -26,7 +50,8 @@ public record SearchState(
                 new HashSet<>(diff.getOnlyInOriginal()),
                 new HashSet<>(diff.getOnlyInUpdate()),
                 List.of(),
-                0
+                0,
+                0.0
         );
     }
 
@@ -70,7 +95,12 @@ public record SearchState(
                 remainingRemoved,
                 remainingAdded,
                 selected,
-                cost + candidate.cost()
+                cost + candidate.cost(),
+                confidencePenalty + confidencePenaltyOf(candidate)
         );
+    }
+
+    private static double confidencePenaltyOf(ChangeCandidate candidate) {
+        return -Math.log(candidate.confidence());
     }
 }

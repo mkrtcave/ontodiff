@@ -24,7 +24,7 @@ public class RemoveUnderCandidateGenerator implements CandidateGenerator {
                                 edge.subject(), edge.object()),
                         Set.of(edge.sourceAxiom()),
                         Set.of(),
-                        1.0,
+                        CandidateConfidence.DIRECT,
                         1,
                         "removed-subclass"
                 ));

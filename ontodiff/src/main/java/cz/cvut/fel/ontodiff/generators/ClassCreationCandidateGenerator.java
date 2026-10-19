@@ -41,7 +41,7 @@ public class ClassCreationCandidateGenerator implements CandidateGenerator {
                 new HighLevelDiffService.ClassCreation(classIri.toString()),
                 Set.of(),
                 addedEvidence,
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "new-class-and-owned-axioms"
         );

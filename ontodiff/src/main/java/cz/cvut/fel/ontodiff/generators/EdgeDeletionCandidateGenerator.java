@@ -35,7 +35,7 @@ public class EdgeDeletionCandidateGenerator implements CandidateGenerator {
                 deletion,
                 Set.of(edge.sourceAxiom()),
                 Set.of(),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "removed-simple-edge"
         );

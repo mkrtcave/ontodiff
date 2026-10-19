@@ -7,7 +7,9 @@ import cz.cvut.fel.ontodiff.utils.SimpleEdgeExtractor;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -15,6 +17,8 @@ import java.util.stream.Stream;
 public class NodeMoveCandidateGenerator implements CandidateGenerator{
 
     private static final String SUBCLASS_OF = "http://www.w3.org/2000/01/rdf-schema#subClassOf";
+
+    private record MovePair(EdgeFact removed, EdgeFact added) {}
 
     private final SimpleEdgeExtractor edgeExtractor = new SimpleEdgeExtractor();
 
@@ -31,16 +35,24 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
                 .flatMap(Optional::stream)
                 .toList();
 
-        List<ChangeCandidate> candidates = new ArrayList<>();
+        List<MovePair> compatiblePairs = new ArrayList<>();
+        Map<String, Integer> pairCountByChild = new HashMap<>();
 
         for (EdgeFact removed : removedEdges) {
             for (EdgeFact added : addedEdges) {
                 if (isPossibleMove(removed, added)) {
-                    candidates.add(createCandidate(removed, added));
+                    compatiblePairs.add(new MovePair(removed, added));
+                    pairCountByChild.merge(removed.subject(), 1, Integer::sum);
                 }
             }
         }
-        return candidates.stream();
+
+        return compatiblePairs.stream()
+                .map(pair -> createCandidate(
+                        pair.removed(),
+                        pair.added(),
+                        pairCountByChild.get(pair.removed().subject())
+                ));
     }
 
 
@@ -53,7 +65,8 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
 
     private ChangeCandidate createCandidate(
             EdgeFact removed,
-            EdgeFact added
+            EdgeFact added,
+            int compatiblePairings
     ) {
         HighLevelDiffService.NodeMove move = new HighLevelDiffService.NodeMove(
                 removed.subject(),
@@ -65,7 +78,10 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
                 move,
                 Set.of(removed.sourceAxiom()),
                 Set.of(added.sourceAxiom()),
-                1.0,
+                CandidateConfidence.adjustedForAmbiguity(
+                        CandidateConfidence.STRUCTURAL_INFERENCE,
+                        compatiblePairings
+                ),
                 1,
                 "same-child-different-parent"
         );

@@ -85,7 +85,7 @@ public class SynonymCandidateGenerator implements CandidateGenerator {
                             display(newFact.literal())),
                     Set.of(oldFact.sourceAxiom()),
                     Set.of(newFact.sourceAxiom()),
-                    0.8,
+                    CandidateConfidence.WEAK_INTERPRETATION,
                     1,
                     "same-entity-synonym-property-language-datatype"
             ));
@@ -138,7 +138,7 @@ public class SynonymCandidateGenerator implements CandidateGenerator {
                         display(fact.literal())),
                 Set.of(),
                 Set.of(fact.sourceAxiom()),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "synonym-added"
         );
@@ -152,7 +152,7 @@ public class SynonymCandidateGenerator implements CandidateGenerator {
                         display(fact.literal())),
                 Set.of(fact.sourceAxiom()),
                 Set.of(),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "synonym-removed"
         );

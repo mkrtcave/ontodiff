@@ -53,7 +53,7 @@ public class CommentChangeCandidateGenerator implements CandidateGenerator {
                             entry.getKey().subjectIri().toString(), oldText, newText),
                     Set.of(oldAxiom),
                     Set.of(newAxiom),
-                    1.0,
+                    CandidateConfidence.UNAMBIGUOUS_PAIR,
                     1,
                     "same-subject-comment-language-datatype"
             ));

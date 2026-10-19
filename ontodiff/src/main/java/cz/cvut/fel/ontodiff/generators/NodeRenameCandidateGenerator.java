@@ -53,7 +53,7 @@ public class NodeRenameCandidateGenerator implements CandidateGenerator {
                             entry.getKey().classIri().toString(), oldLabel, newLabel),
                     Set.of(oldAxiom),
                     Set.of(newAxiom),
-                    1.0,
+                    CandidateConfidence.UNAMBIGUOUS_PAIR,
                     1,
                     "same-class-label-language-datatype"
             ));

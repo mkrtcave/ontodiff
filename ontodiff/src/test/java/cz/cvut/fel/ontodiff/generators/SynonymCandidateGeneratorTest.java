@@ -79,6 +79,8 @@ public class SynonymCandidateGeneratorTest {
                 CLASS_IRI.toString(), OBO_IN_OWL + "hasExactSynonym",
                 "flu@en", "influenza@en")),
                 result.selectedCandidates().stream().map(ChangeCandidate::change).toList());
+        assertEquals(CandidateConfidence.WEAK_INTERPRETATION,
+                result.selectedCandidates().get(0).confidence(), 0.0);
         assertEquals(1, result.cost());
         assertTrue(FallbackChanges.create(diff, result).isEmpty());
     }

@@ -8,6 +8,8 @@ import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 import cz.cvut.fel.ontodiff.service.OWLDiffOntologyDiffService;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
@@ -55,7 +57,8 @@ public class NodeMoveCandidateGeneratorTest {
         for (ChangeCandidate candidate : candidates) {
             assertEquals(1, candidate.removedEvidence().size());
             assertEquals(1, candidate.addedEvidence().size());
-            assertEquals(1.0, candidate.confidence(), 0.0);
+            assertEquals(CandidateConfidence.STRUCTURAL_INFERENCE,
+                    candidate.confidence(), 0.0);
             assertEquals(1, candidate.cost());
             assertEquals("same-child-different-parent", candidate.rule());
         }
@@ -69,6 +72,22 @@ public class NodeMoveCandidateGeneratorTest {
         assertTrue(state.isGoal());
         assertEquals(3, state.selectedCandidates().size());
         assertEquals(3, state.cost());
+    }
+
+    @Test
+    public void reducesConfidenceForAmbiguousParentPairings() throws Exception {
+        OWLOntology original = ontologyWithParents("OldParent1", "OldParent2");
+        OWLOntology update = ontologyWithParents("NewParent1", "NewParent2");
+        DiffResult diff = new OWLDiffOntologyDiffService()
+                .diff(original, update, Engine.SYNTACTIC);
+
+        List<ChangeCandidate> candidates = generator.generate(diff).toList();
+
+        assertEquals(4, candidates.size());
+        for (ChangeCandidate candidate : candidates) {
+            assertEquals(CandidateConfidence.STRUCTURAL_INFERENCE / 4.0,
+                    candidate.confidence(), 0.0);
+        }
     }
 
     private void assertMove(
@@ -100,5 +119,19 @@ public class NodeMoveCandidateGeneratorTest {
             }
             return manager.loadOntologyFromOntologyDocument(input);
         }
+    }
+
+    private OWLOntology ontologyWithParents(String... parents) throws Exception {
+        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+        OWLOntology ontology = manager.createOntology();
+        OWLDataFactory dataFactory = manager.getOWLDataFactory();
+
+        for (String parent : parents) {
+            manager.addAxiom(ontology, dataFactory.getOWLSubClassOfAxiom(
+                    dataFactory.getOWLClass(IRI.create(NS + "Flu")),
+                    dataFactory.getOWLClass(IRI.create(NS + parent))));
+        }
+
+        return ontology;
     }
 }

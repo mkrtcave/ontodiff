@@ -22,7 +22,7 @@ public class PlaceUnderCandidateGenerator implements CandidateGenerator {
                          edge.subject(), edge.object()),
                         Set.of(),
                         Set.of(edge.sourceAxiom()),
-                        1.0,
+                        CandidateConfidence.DIRECT,
                         1,
                         "added-subclass"
                 ));

@@ -45,7 +45,7 @@ public class SubsetCandidateGenerator implements CandidateGenerator  {
                 change,
                 added ? Set.of() : Set.of(axiom),
                 added ? Set.of(axiom) : Set.of(),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 added ? "added-to-subset" : "removed-from-subset"
         ));

@@ -113,6 +113,22 @@ import java.util.*;
 
 public class StateSpaceSearch {
 
+    private record SearchScore(int cost, double confidencePenalty)
+            implements Comparable<SearchScore> {
+
+        static SearchScore from(SearchState state) {
+            return new SearchScore(state.cost(), state.confidencePenalty());
+        }
+
+        @Override
+        public int compareTo(SearchScore other) {
+            int costComparison = Integer.compare(cost, other.cost);
+            return costComparison != 0
+                    ? costComparison
+                    : Double.compare(confidencePenalty, other.confidencePenalty);
+        }
+    }
+
     public SearchState search(
             DiffResult diff,
             List<ChangeCandidate> candidates
@@ -171,19 +187,20 @@ public class StateSpaceSearch {
 
         PriorityQueue<SearchState> frontier =
                 new PriorityQueue<>(
-                        Comparator.comparingInt(SearchState::cost)
+                        Comparator.comparing(SearchScore::from)
                 );
 
-        Map<StateKey, Integer> bestKnownCost = new HashMap<>();
+        Map<StateKey, SearchScore> bestKnownScore = new HashMap<>();
 
         frontier.add(initial);
-        bestKnownCost.put(StateKey.from(initial), 0);
+        bestKnownScore.put(StateKey.from(initial), SearchScore.from(initial));
 
         while (!frontier.isEmpty()) {
             SearchState current = frontier.poll();
             StateKey currentKey = StateKey.from(current);
+            SearchScore currentScore = SearchScore.from(current);
 
-            if (current.cost() > bestKnownCost.get(currentKey)) {
+            if (currentScore.compareTo(bestKnownScore.get(currentKey)) > 0) {
                 continue;
             }
 
@@ -194,14 +211,12 @@ public class StateSpaceSearch {
             for (ChangeCandidate candidate : index.findApplicable(current)) {
                 SearchState child = current.apply(candidate);
                 StateKey childKey = StateKey.from(child);
+                SearchScore childScore = SearchScore.from(child);
 
-                int previousCost = bestKnownCost.getOrDefault(
-                        childKey,
-                        Integer.MAX_VALUE
-                );
+                SearchScore previousScore = bestKnownScore.get(childKey);
 
-                if (child.cost() < previousCost) {
-                    bestKnownCost.put(childKey, child.cost());
+                if (previousScore == null || childScore.compareTo(previousScore) < 0) {
+                    bestKnownScore.put(childKey, childScore);
                     frontier.add(child);
                 }
             }

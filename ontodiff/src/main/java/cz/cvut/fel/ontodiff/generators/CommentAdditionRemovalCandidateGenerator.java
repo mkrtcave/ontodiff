@@ -44,7 +44,7 @@ public class CommentAdditionRemovalCandidateGenerator implements CandidateGenera
                 change,
                 added ? Set.of() : Set.of(axiom),
                 added ? Set.of(axiom) : Set.of(),
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 added ? "comment-added" : "comment-removed"
         ));

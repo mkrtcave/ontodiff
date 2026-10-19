@@ -63,7 +63,7 @@ public class NodeCreationCandidateGenerator implements CandidateGenerator {
                 new HighLevelDiffService.NodeCreation(iri.toString()),
                 Set.of(),
                 addedEvidence,
-                1.0,
+                CandidateConfidence.DIRECT,
                 1,
                 "new-non-class-node-and-annotations"
         );

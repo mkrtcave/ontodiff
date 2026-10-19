@@ -51,6 +51,8 @@ public class EquivalentClassesChangeCandidateGeneratorTest {
                 candidate.change());
         assertEquals(Set.of(oldAxiom), candidate.removedEvidence());
         assertEquals(Set.of(newAxiom), candidate.addedEvidence());
+        assertEquals(CandidateConfidence.UNAMBIGUOUS_PAIR,
+                candidate.confidence(), 0.0);
         assertEquals(1, candidate.cost());
 
         SearchState result = new StateSpaceSearch().search(diff, candidates);

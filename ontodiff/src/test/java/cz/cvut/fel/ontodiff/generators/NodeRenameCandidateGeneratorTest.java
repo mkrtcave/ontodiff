@@ -45,6 +45,8 @@ public class NodeRenameCandidateGeneratorTest {
                 CLASS_IRI.toString(), "Influenza", "Flu"), candidate.change());
         assertEquals(Set.of(oldLabel), candidate.removedEvidence());
         assertEquals(Set.of(newLabel), candidate.addedEvidence());
+        assertEquals(CandidateConfidence.UNAMBIGUOUS_PAIR,
+                candidate.confidence(), 0.0);
         assertEquals(1, candidate.cost());
 
         SearchState result = new StateSpaceSearch().search(diff, candidates);
