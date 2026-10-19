@@ -6,6 +6,8 @@ An **atomic** change consumes one OWL axiom ( e.g. addition or removal). A **com
 
 In the table, `C`, `P`, and `Q` are named classes, and `S` is an IRI subject. For `EdgeCreation` and `EdgeDeletion`, `p` is a named object property; in `PredicateChange`, `p` and `q` can also be `rdfs:subClassOf`. `AnnotationAssertion(prop C value)` means an annotation whose subject is the IRI of `C`. `edge(C, p, P)` is shorthand for `SubClassOf(C ObjectSomeValuesFrom(p P))`; `edge(C, rdfs:subClassOf, P)` means `SubClassOf(C P)`.
 
+Literal values in `NodeRename` and `CommentChange` preserve three components: lexical form, language, and datatype IRI. The candidate evidence retains the complete source annotation assertions, so the removed literal can be traced to the original ontology and the added literal to the updated ontology.
+
 | Change type | Removed evidence | Added evidence | Condition                                                                                                                      |
 | --- | --- | --- |--------------------------------------------------------------------------------------------------------------------------------|
 | `ClassCreation(C)` | — | `Declaration(Class(C))`, plus any added annotations on `C` and outgoing `SubClassOf(C X)` axioms | Atomic for the declaration alone; compound when other owned axioms are added. Requires `C` to be absent from the original class signature. |

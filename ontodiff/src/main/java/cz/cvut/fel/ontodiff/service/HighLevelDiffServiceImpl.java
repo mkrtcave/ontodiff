@@ -1,6 +1,7 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.utils.EdgeFact;
 import cz.cvut.fel.ontodiff.properties.SynonymPropety;
 import cz.cvut.fel.ontodiff.properties.TextDefinitionProperties;
@@ -421,8 +422,8 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
 
             for (OWLLiteral oldLit : removed) {
                 for (OWLLiteral newLit : added) {
-                    String oldLabel = labelToDisplay(oldLit);
-                    String newLabel = labelToDisplay(newLit);
+                    LiteralValue oldLabel = LiteralValue.from(oldLit);
+                    LiteralValue newLabel = LiteralValue.from(newLit);
                     if (oldLabel.equals(newLabel)) {
                         continue;
                     }
@@ -453,16 +454,6 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         }
 
         return result;
-    }
-
-    private String labelToDisplay(OWLLiteral lit) {
-        String s = lit.getLiteral();
-        if (lit.hasLang()) {
-            s = s + "@" + lit.getLang();
-        } else if (!lit.isRDFPlainLiteral() && lit.getDatatype() != null) {
-            s = s + "^^" + lit.getDatatype().getIRI();
-        }
-        return s;
     }
 
     private Set<OWLLiteral> getDefinitions(IRI entityIri, OWLOntology ont) {

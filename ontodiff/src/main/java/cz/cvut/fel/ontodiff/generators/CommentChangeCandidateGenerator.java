@@ -2,6 +2,7 @@ package cz.cvut.fel.ontodiff.generators;
 
 import cz.cvut.fel.ontodiff.DiffResult;
 import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -41,8 +42,10 @@ public class CommentChangeCandidateGenerator implements CandidateGenerator {
 
             OWLAnnotationAssertionAxiom oldAxiom = oldComments.get(0);
             OWLAnnotationAssertionAxiom newAxiom = newComments.get(0);
-            String oldText = ((OWLLiteral) oldAxiom.getValue()).getLiteral();
-            String newText = ((OWLLiteral) newAxiom.getValue()).getLiteral();
+            OWLLiteral oldLiteral = (OWLLiteral) oldAxiom.getValue();
+            OWLLiteral newLiteral = (OWLLiteral) newAxiom.getValue();
+            String oldText = oldLiteral.getLiteral();
+            String newText = newLiteral.getLiteral();
 
             if (oldText.equals(newText)) {
                 continue;
@@ -50,7 +53,9 @@ public class CommentChangeCandidateGenerator implements CandidateGenerator {
 
             candidates.add(new ChangeCandidate(
                     new HighLevelDiffService.CommentChange(
-                            entry.getKey().subjectIri().toString(), oldText, newText),
+                            entry.getKey().subjectIri().toString(),
+                            LiteralValue.from(oldLiteral),
+                            LiteralValue.from(newLiteral)),
                     Set.of(oldAxiom),
                     Set.of(newAxiom),
                     CandidateConfidence.UNAMBIGUOUS_PAIR,

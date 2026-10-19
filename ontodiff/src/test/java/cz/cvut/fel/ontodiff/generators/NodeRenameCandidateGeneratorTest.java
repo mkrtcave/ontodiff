@@ -5,6 +5,7 @@ import cz.cvut.fel.ontodiff.Engine;
 import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.changes.FallbackChange;
 import cz.cvut.fel.ontodiff.changes.FallbackChanges;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 import cz.cvut.fel.ontodiff.service.OWLDiffOntologyDiffService;
 import cz.cvut.fel.ontodiff.statesearch.SearchState;
@@ -42,7 +43,9 @@ public class NodeRenameCandidateGeneratorTest {
         assertEquals(1, candidates.size());
         ChangeCandidate candidate = candidates.get(0);
         assertEquals(new HighLevelDiffService.NodeRename(
-                CLASS_IRI.toString(), "Influenza", "Flu"), candidate.change());
+                CLASS_IRI.toString(),
+                literalValue("Influenza", "en"),
+                literalValue("Flu", "en")), candidate.change());
         assertEquals(Set.of(oldLabel), candidate.removedEvidence());
         assertEquals(Set.of(newLabel), candidate.addedEvidence());
         assertEquals(CandidateConfidence.UNAMBIGUOUS_PAIR,
@@ -95,6 +98,10 @@ public class NodeRenameCandidateGeneratorTest {
                 dataFactory.getRDFSLabel(),
                 CLASS_IRI,
                 dataFactory.getOWLLiteral(text, language));
+    }
+
+    private LiteralValue literalValue(String text, String language) {
+        return LiteralValue.from(dataFactory.getOWLLiteral(text, language));
     }
 
     private DiffResult diff(List<OWLAnnotationAssertionAxiom> removed, List<OWLAnnotationAssertionAxiom> added)

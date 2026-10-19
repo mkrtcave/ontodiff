@@ -17,6 +17,8 @@ For example, `NodeMove(Flu, Disease, RespiratoryDisease)` is one meaningful chan
 
 `NodeRename` similarly pairs an old and a new `rdfs:label` assertion for the same existing class when their language and datatype match. Unpaired labels remain annotation additions or removals.
 
+`NodeRename` and `CommentChange` keep each affected literal as a `LiteralValue` containing its lexical form, language, and datatype IRI. Their `ChangeCandidate` also retains the complete removed and added annotation axioms as evidence. When a node rename is exported to RDF, its `kgcl:old_value` and `kgcl:new_value` remain language-tagged or typed literals rather than plain strings.
+
 Candidate confidence must be in `(0, 1]`. Directly observed changes use `1.0`; uniquely paired old/new changes use `0.95`; structural inferences such as `NodeMove` use `0.9`; and weaker interpretations such as `PredicateChange` and `SynonymReplacement` use `0.8`. For `NodeMove` and `PredicateChange`, the base value is divided by the number of compatible pairings when pairing is ambiguous. The search accumulates `-log(confidence)` and uses the total only to break ties between explanations with the same cost. These values are heuristic scores rather than calibrated probabilities.
 
 OntoDiff currently works from OWL axioms, not an RDF triple diff or semantic entailments. The `ontodiff` module requires Java 17.

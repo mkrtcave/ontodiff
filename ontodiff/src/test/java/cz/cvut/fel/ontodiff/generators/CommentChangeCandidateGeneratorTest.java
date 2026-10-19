@@ -4,6 +4,7 @@ import cz.cvut.fel.ontodiff.DiffResult;
 import cz.cvut.fel.ontodiff.Engine;
 import cz.cvut.fel.ontodiff.changes.ChangeCandidate;
 import cz.cvut.fel.ontodiff.changes.FallbackChanges;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
 import cz.cvut.fel.ontodiff.service.OWLDiffOntologyDiffService;
 import cz.cvut.fel.ontodiff.statesearch.SearchState;
@@ -44,7 +45,9 @@ public class CommentChangeCandidateGeneratorTest {
         assertEquals(1, candidates.size());
         ChangeCandidate candidate = candidates.get(0);
         assertEquals(new HighLevelDiffService.CommentChange(
-                CLASS_IRI.toString(), "A viral disease.", "A respiratory viral disease."),
+                CLASS_IRI.toString(),
+                literalValue("A viral disease.", "en"),
+                literalValue("A respiratory viral disease.", "en")),
                 candidate.change());
         assertEquals(Set.of(oldComment), candidate.removedEvidence());
         assertEquals(Set.of(newComment), candidate.addedEvidence());
@@ -65,7 +68,9 @@ public class CommentChangeCandidateGeneratorTest {
 
         ChangeCandidate candidate = generator.generate(diff).toList().get(0);
         assertEquals(new HighLevelDiffService.CommentChange(
-                PROPERTY_IRI.toString(), "Old comment", "New comment"),
+                PROPERTY_IRI.toString(),
+                literalValue("Old comment", "en"),
+                literalValue("New comment", "en")),
                 candidate.change());
     }
 
@@ -105,7 +110,9 @@ public class CommentChangeCandidateGeneratorTest {
         assertEquals(3, candidates.size());
         SearchState result = new StateSpaceSearch().search(diff, candidates);
         assertEquals(List.of(new HighLevelDiffService.CommentChange(
-                CLASS_IRI.toString(), "Old", "New")),
+                CLASS_IRI.toString(),
+                literalValue("Old", "en"),
+                literalValue("New", "en"))),
                 result.selectedCandidates().stream().map(ChangeCandidate::change).toList());
         assertEquals(1, result.cost());
         assertTrue(FallbackChanges.create(diff, result).isEmpty());
@@ -165,6 +172,10 @@ public class CommentChangeCandidateGeneratorTest {
                 dataFactory.getRDFSComment(),
                 subject,
                 dataFactory.getOWLLiteral(text, language));
+    }
+
+    private LiteralValue literalValue(String text, String language) {
+        return LiteralValue.from(dataFactory.getOWLLiteral(text, language));
     }
 
     private DiffResult diff(

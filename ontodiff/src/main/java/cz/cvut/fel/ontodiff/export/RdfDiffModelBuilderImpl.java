@@ -1,11 +1,14 @@
 package cz.cvut.fel.ontodiff.export;
 
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
@@ -146,8 +149,8 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
             ch.addProperty(aboutNodeProp, node);
             Property oldVal = diffGraphModel.createProperty(KGCL_NS, "old_value");
             Property newVal = diffGraphModel.createProperty(KGCL_NS, "new_value");
-            ch.addLiteral(oldVal, c.oldLabel());
-            ch.addLiteral(newVal, c.newLabel());
+            ch.addProperty(oldVal, toRdfLiteral(diffGraphModel, c.oldLabel()));
+            ch.addProperty(newVal, toRdfLiteral(diffGraphModel, c.newLabel()));
             tx.addProperty(changeSetProp, ch);
         }
 
@@ -330,6 +333,17 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
         } else {
             return model.createResource();
         }
+    }
+
+    private static Literal toRdfLiteral(Model model, LiteralValue value) {
+        if (value.hasLanguage()) {
+            return model.createLiteral(value.lexicalForm(), value.language());
+        }
+
+        return model.createTypedLiteral(
+                value.lexicalForm(),
+                TypeMapper.getInstance().getSafeTypeByName(value.datatypeIri())
+        );
     }
 
     private static String sanitizeLocalName(String s) {

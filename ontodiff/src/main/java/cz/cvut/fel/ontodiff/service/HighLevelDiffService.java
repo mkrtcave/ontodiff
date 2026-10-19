@@ -1,6 +1,7 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.changes.ProposedChange;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
@@ -25,7 +26,11 @@ public interface HighLevelDiffService {
             OWLClassExpression oldExpression,
             OWLClassExpression newExpression
     ) implements ProposedChange {}
-    record CommentChange(String subjectIri, String oldComment, String newComment) implements ProposedChange {}
+    record CommentChange(
+            String subjectIri,
+            LiteralValue oldComment,
+            LiteralValue newComment
+    ) implements ProposedChange {}
     record CommentAddition(String subjectIri, String comment) implements ProposedChange {}
     record CommentRemoval(String subjectIri, String comment) implements ProposedChange {}
     record NewSynonym(String entityIri, String propertyIri, String synonym) implements ProposedChange {}
@@ -35,7 +40,11 @@ public interface HighLevelDiffService {
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
-    record NodeRename(String classIri, String oldLabel, String newLabel) implements ProposedChange {}
+    record NodeRename(
+            String classIri,
+            LiteralValue oldLabel,
+            LiteralValue newLabel
+    ) implements ProposedChange {}
     record NewTextDefinition(String classIri, String definition) implements ProposedChange {}
     record RemoveTextDefinition(String classIri, String definition) implements ProposedChange {}
     record NodeTextDefinitionChange(String classIri, String oldDefinition, String newDefinition) implements ProposedChange {}
