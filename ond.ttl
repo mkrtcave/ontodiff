@@ -53,7 +53,7 @@ ond:inProject a owl:ObjectProperty ;
 ond:hasRun a owl:ObjectProperty ;
     rdfs:label "has diff run"@en ;
     rdfs:domain ond:DiffProject ;
-    rdfs:range ond:DiffRun
+    rdfs:range ond:DiffRun .
 
 # Result
 
@@ -62,7 +62,7 @@ ond:result a owl:ObjectProperty ;
     rdfs:domain ond:DiffRun ;
     rdfs:range ond:DiffResult .
 
-ond:hasKglTransaction a owl:ObjectProperty ;
+ond:hasKgclTransaction a owl:ObjectProperty ;
     rdfs:label "has KGCL transaction"@en ;
     rdfs:domain ond:DiffResult ;
     rdfs:range kgcl:Transaction .

@@ -98,9 +98,18 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
         String txIdValue = metadata.generatedAt() != null ? metadata.generatedAt().toString() : "unknown";
         tx.addLiteral(kgclId, "TX-" + txIdValue);
 
+        String resultIri = isLikelyValidIri(metadata.diffRunIri())
+                ? metadata.diffRunIri() + "#result"
+                : null;
+        Resource diffResult = resourceOrBnode(defaultModel, resultIri);
+        Resource diffResultClass = defaultModel.createResource(OND_NS + "DiffResult");
+        diffResult.addProperty(RDF.type, diffResultClass);
+
+        Property result = defaultModel.createProperty(OND_NS, "result");
         Property hasKgclTransaction = defaultModel.createProperty(OND_NS, "hasKgclTransaction");
-        diffRun.addProperty(hasKgclTransaction, tx);
-        diffRun.addProperty(provGenerated, tx);
+        diffRun.addProperty(result, diffResult);
+        diffResult.addProperty(hasKgclTransaction, tx);
+        diffRun.addProperty(provGenerated, diffResult);
 
         int changeCounter = 1;
 
