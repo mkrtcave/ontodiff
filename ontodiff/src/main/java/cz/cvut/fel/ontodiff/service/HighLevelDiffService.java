@@ -39,6 +39,10 @@ public interface HighLevelDiffService {
 
 
     record NodeObsoletion(String iri, String reason) implements ProposedChange {}
+    record NodeObsoletionWithDirectReplacement(
+            String iri,
+            String replacement
+    ) implements ProposedChange {}
     record SrcTgt(String srcIri, String tgtIri) implements ProposedChange {}
     record NodeRename(
             String classIri,
