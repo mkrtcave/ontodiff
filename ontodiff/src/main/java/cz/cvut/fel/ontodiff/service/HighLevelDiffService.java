@@ -16,6 +16,21 @@ public interface HighLevelDiffService {
     record EdgeCreation(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record EdgeDeletion(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) implements ProposedChange {}
+    record Edge(
+            String subject,
+            String predicate,
+            String object,
+            String subjectRepresentation,
+            String predicateRepresentation,
+            String objectRepresentation
+    ) {}
+    record NodeDeepening(
+            String oldValue,
+            String newValue,
+            Edge aboutEdge,
+            String oldObjectType,
+            String newObjectType
+    ) implements ProposedChange {}
     record PlaceUnder(String childIri, String parentIri) implements ProposedChange {}
     record RemoveUnder(String childIri, String parentIri) implements ProposedChange {}
     record AddNodeToSubset(String nodeIri, String subsetIri) implements ProposedChange {}

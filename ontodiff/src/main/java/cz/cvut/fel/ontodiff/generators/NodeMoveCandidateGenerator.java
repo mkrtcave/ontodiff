@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NodeMoveCandidateGenerator implements CandidateGenerator{
@@ -27,19 +28,22 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
                 .stream()
                 .map(edgeExtractor::extract)
                 .flatMap(Optional::stream)
+                .filter(this::isSubclassEdge)
                 .toList();
 
-        List<EdgeFact> addedEdges = diff.getOnlyInUpdate()
+        Map<String, List<EdgeFact>> addedEdgesByChild = diff.getOnlyInUpdate()
                 .stream()
                 .map(edgeExtractor::extract)
                 .flatMap(Optional::stream)
-                .toList();
+                .filter(this::isSubclassEdge)
+                .collect(Collectors.groupingBy(EdgeFact::subject));
 
         List<MovePair> compatiblePairs = new ArrayList<>();
         Map<String, Integer> pairCountByChild = new HashMap<>();
 
         for (EdgeFact removed : removedEdges) {
-            for (EdgeFact added : addedEdges) {
+            for (EdgeFact added : addedEdgesByChild.getOrDefault(
+                    removed.subject(), List.of())) {
                 if (isPossibleMove(removed, added)) {
                     compatiblePairs.add(new MovePair(removed, added));
                     pairCountByChild.merge(removed.subject(), 1, Integer::sum);
@@ -55,11 +59,12 @@ public class NodeMoveCandidateGenerator implements CandidateGenerator{
                 ));
     }
 
+    private boolean isSubclassEdge(EdgeFact edge) {
+        return edge.predicate().equals(SUBCLASS_OF);
+    }
 
     private boolean isPossibleMove(EdgeFact removed, EdgeFact added) {
-        return removed.predicate().equals(SUBCLASS_OF)
-                && added.predicate().equals(SUBCLASS_OF)
-                && removed.subject().equals(added.subject())
+        return removed.subject().equals(added.subject())
                 && !removed.object().equals(added.object());
     }
 
