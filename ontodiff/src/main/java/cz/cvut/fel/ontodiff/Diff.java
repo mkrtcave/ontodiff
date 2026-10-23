@@ -27,8 +27,11 @@ public class Diff {
 //        String u1 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/inters/intersection-v1.ttl";
 //        String u2 = "file:/D:/owldiff/ontodiff/src/test/resources/ontologies/node-move/inters/intersection-v2.ttl";
 
-        String u1 = "file:/D:/apollo_sv(1).owl";
-        String u2 = "file:/D:/apollo_sv.owl";
+//        String u1 = "file:/D:/apollo_sv(1).owl";
+//        String u2 = "file:/D:/apollo_sv.owl";
+
+        String u1 = "file:/C://Users//mkrtcave//Downloads//afpo-old.owl";
+        String u2 = "file:/C://Users//mkrtcave//Downloads//afpo.owl";
 
         try {
             final OWLOntologyManager originalM = OWLManager.createOWLOntologyManager();
@@ -46,6 +49,7 @@ public class Diff {
                     new EdgeDeletionCandidateGenerator(),
                     new NodeMoveCandidateGenerator(),
                     new NodeDeepeningCandidateGenerator(),
+                    new IriRenameCandidateGenerator(),
                     new NodeRenameCandidateGenerator(),
                     new CommentChangeCandidateGenerator(),
                     new CommentAdditionRemovalCandidateGenerator(),

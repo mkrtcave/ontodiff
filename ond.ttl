@@ -28,6 +28,21 @@ ond:OntologyVersion a owl:Class ;
     rdfs:label "Ontology version"@en ;
     rdfs:subClassOf prov:Entity .
 
+ond:IRIRename a owl:Class ;
+    rdfs:label "IRI rename"@en ;
+    rdfs:comment "A refactoring that consistently replaces an ontology entity IRI."@en ;
+    rdfs:subClassOf kgcl:Change .
+
+ond:oldIRI a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "old IRI"@en ;
+    rdfs:domain ond:IRIRename ;
+    rdfs:range xsd:anyURI .
+
+ond:newIRI a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "new IRI"@en ;
+    rdfs:domain ond:IRIRename ;
+    rdfs:range xsd:anyURI .
+
 # diff output properties
 
 ond:fromOntology a owl:ObjectProperty, owl:FunctionalProperty ;

@@ -14,8 +14,7 @@ public final class CandidateConfidence {
     private CandidateConfidence() {
     }
 
-    public static double adjustedForAmbiguity(double baseConfidence,
-                                               int compatiblePairings) {
+    public static double adjustedForAmbiguity(double baseConfidence, int compatiblePairings) {
         if (!Double.isFinite(baseConfidence) || baseConfidence <= 0.0 || baseConfidence > 1.0) {
             throw new IllegalArgumentException("Base confidence must be finite and in (0, 1]: " + baseConfidence);
         }

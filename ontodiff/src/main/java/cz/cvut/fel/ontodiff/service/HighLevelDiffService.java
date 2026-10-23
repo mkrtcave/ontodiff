@@ -16,6 +16,7 @@ public interface HighLevelDiffService {
     record EdgeCreation(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record EdgeDeletion(String srcIri, String propIri, String tgtIri) implements ProposedChange {}
     record NodeMove(String chldIri, String oldPrtIri, String newPrtIri) implements ProposedChange {}
+    record IriRename(String oldIri, String newIri) implements ProposedChange {}
     record Edge(
             String subject,
             String predicate,
