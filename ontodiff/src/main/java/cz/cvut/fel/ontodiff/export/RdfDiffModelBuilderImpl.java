@@ -1,11 +1,14 @@
 package cz.cvut.fel.ontodiff.export;
 
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
 import cz.cvut.fel.ontodiff.service.HighLevelDiffService;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
@@ -98,9 +101,18 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
         String txIdValue = metadata.generatedAt() != null ? metadata.generatedAt().toString() : "unknown";
         tx.addLiteral(kgclId, "TX-" + txIdValue);
 
+        String resultIri = isLikelyValidIri(metadata.diffRunIri())
+                ? metadata.diffRunIri() + "#result"
+                : null;
+        Resource diffResult = resourceOrBnode(defaultModel, resultIri);
+        Resource diffResultClass = defaultModel.createResource(OND_NS + "DiffResult");
+        diffResult.addProperty(RDF.type, diffResultClass);
+
+        Property result = defaultModel.createProperty(OND_NS, "result");
         Property hasKgclTransaction = defaultModel.createProperty(OND_NS, "hasKgclTransaction");
-        diffRun.addProperty(hasKgclTransaction, tx);
-        diffRun.addProperty(provGenerated, tx);
+        diffRun.addProperty(result, diffResult);
+        diffResult.addProperty(hasKgclTransaction, tx);
+        diffRun.addProperty(provGenerated, diffResult);
 
         int changeCounter = 1;
 
@@ -137,8 +149,8 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
             ch.addProperty(aboutNodeProp, node);
             Property oldVal = diffGraphModel.createProperty(KGCL_NS, "old_value");
             Property newVal = diffGraphModel.createProperty(KGCL_NS, "new_value");
-            ch.addLiteral(oldVal, c.oldLabel());
-            ch.addLiteral(newVal, c.newLabel());
+            ch.addProperty(oldVal, toRdfLiteral(diffGraphModel, c.oldLabel()));
+            ch.addProperty(newVal, toRdfLiteral(diffGraphModel, c.newLabel()));
             tx.addProperty(changeSetProp, ch);
         }
 
@@ -321,6 +333,17 @@ public class RdfDiffModelBuilderImpl implements RdfDiffModelBuilder {
         } else {
             return model.createResource();
         }
+    }
+
+    private static Literal toRdfLiteral(Model model, LiteralValue value) {
+        if (value.hasLanguage()) {
+            return model.createLiteral(value.lexicalForm(), value.language());
+        }
+
+        return model.createTypedLiteral(
+                value.lexicalForm(),
+                TypeMapper.getInstance().getSafeTypeByName(value.datatypeIri())
+        );
     }
 
     private static String sanitizeLocalName(String s) {

@@ -1,6 +1,8 @@
 package cz.cvut.fel.ontodiff.service;
 
 import cz.cvut.fel.ontodiff.DiffResult;
+import cz.cvut.fel.ontodiff.changes.LiteralValue;
+import cz.cvut.fel.ontodiff.utils.EdgeFact;
 import cz.cvut.fel.ontodiff.properties.SynonymPropety;
 import cz.cvut.fel.ontodiff.properties.TextDefinitionProperties;
 import org.semanticweb.owlapi.model.*;
@@ -8,6 +10,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 public class HighLevelDiffServiceImpl implements HighLevelDiffService{
 
@@ -23,6 +26,7 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         created.removeAll(originalEntities);
 
         return created.stream()
+                .filter(e -> !e.isOWLClass())
                 .map(e -> new NodeCreation(e.getIRI().getIRIString()))
                 .collect(Collectors.toSet());
     }
@@ -280,7 +284,27 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         return result;
     }
 
+    private Optional<EdgeFact> extractSimpleEdge(OWLAxiom axiom) {
+        if (axiom instanceof OWLSubClassOfAxiom subClassAxiom
+                && !subClassAxiom.getSubClass().isAnonymous()
+                && !subClassAxiom.getSuperClass().isAnonymous()) {
 
+            return Optional.of(new EdgeFact(
+                    subClassAxiom.getSubClass()
+                            .asOWLClass()
+                            .getIRI()
+                            .toString(),
+                    SUBCLASS_PROP,
+                    subClassAxiom.getSuperClass()
+                            .asOWLClass()
+                            .getIRI()
+                            .toString(),
+                    axiom
+            ));
+        }
+
+        return Optional.empty();
+    }
 
     private Set<EdgeCreation> computeEdgeCreations(DiffResult diff) {
         return diff.getOnlyInUpdate().stream()
@@ -359,7 +383,7 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
             for (String oldP : oldPred) {
                 for (String newP : newPred) {
                     if (oldP.equals(newP)) continue;
-                    result.add(new PredicateChange(key.srcIri(), oldP, newP));
+                    result.add(new PredicateChange(key.srcIri(), key.tgtIri(), oldP, newP));
                 }
             }
         }
@@ -398,8 +422,8 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
 
             for (OWLLiteral oldLit : removed) {
                 for (OWLLiteral newLit : added) {
-                    String oldLabel = labelToDisplay(oldLit);
-                    String newLabel = labelToDisplay(newLit);
+                    LiteralValue oldLabel = LiteralValue.from(oldLit);
+                    LiteralValue newLabel = LiteralValue.from(newLit);
                     if (oldLabel.equals(newLabel)) {
                         continue;
                     }
@@ -430,16 +454,6 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         }
 
         return result;
-    }
-
-    private String labelToDisplay(OWLLiteral lit) {
-        String s = lit.getLiteral();
-        if (lit.hasLang()) {
-            s = s + "@" + lit.getLang();
-        } else if (!lit.isRDFPlainLiteral() && lit.getDatatype() != null) {
-            s = s + "^^" + lit.getDatatype().getIRI();
-        }
-        return s;
     }
 
     private Set<OWLLiteral> getDefinitions(IRI entityIri, OWLOntology ont) {
@@ -643,7 +657,8 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
         Set<NodeTextDefinitionChange> nodeTextDefinitionChanges = computeNodeTextDefinitionChanges(diffResult);
         Set<NewSynonym> newSynonyms = computeNewSynonyms(diffResult);
         Set<RemoveSynonym> removeSynonyms = computeRemoveSynonyms(diffResult);
-
+        Set<PlaceUnder> placeUnders = null;
+        Set<RemoveUnder> removeUnders = null;
         return new HighLevelDiff(
                 nodeCreations,
                 nodeDeletions,
@@ -659,7 +674,10 @@ public class HighLevelDiffServiceImpl implements HighLevelDiffService{
                 removeTextDefinitions,
                 nodeTextDefinitionChanges,
                 newSynonyms,
-                removeSynonyms
+                removeSynonyms,
+                placeUnders,
+                removeUnders
+
         );
     }
 }
